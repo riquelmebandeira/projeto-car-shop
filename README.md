@@ -98,7 +98,7 @@ Para este projeto, você deverá aplicar os princípios de `POO` para a contruç
 ## Data de Entrega
 
     - Serão `3` dias de projeto.
-    - Data de entrega para avaliação final do projeto: `DD/MM/AAAA 14:00`.
+    - Data de entrega para avaliação final do projeto: `21/04/2022 14:00`.
 
 ---
 
