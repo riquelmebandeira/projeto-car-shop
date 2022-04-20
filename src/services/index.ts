@@ -14,14 +14,6 @@ abstract class Service<T> {
 
     return this.model.create(obj);
   }
-
-  abstract read(): Promise<T[]>;
-
-  abstract readOne(id: string): Promise<T | null | ServiceError>;
-
-  abstract update(id: string, obj: T): Promise<T | null | ServiceError>;
-
-  abstract delete(id: string): Promise<T | null | ServiceError>;
 }
 
 export default Service;
