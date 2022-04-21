@@ -14,6 +14,8 @@ abstract class Service<T> {
 
     return this.model.create(obj);
   }
+
+  public async read(): Promise<T[]> { return this.model.read(); }
 }
 
 export default Service;
