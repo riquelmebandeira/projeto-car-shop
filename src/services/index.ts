@@ -3,7 +3,7 @@ import { Model } from '../interfaces/ModelInterface';
 import ServiceError from '../interfaces/ServiceErrorInterface';
 
 abstract class Service<T> {
-  constructor(protected model: Model<T>, private documentSchema: ZodAny) { }
+  constructor(public model: Model<T>, public documentSchema: ZodAny) { }
 
   public async create(obj: T): Promise<T | ServiceError> {
     const parsed = this.documentSchema.safeParse(obj);
