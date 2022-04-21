@@ -11,7 +11,7 @@ abstract class Controller<T> {
 
   protected errors = ControllerErrors;
 
-  constructor(protected service: Service<T>, route: string) {
+  constructor(public service: Service<T>, route: string) {
     this._route = route;
   }
 
