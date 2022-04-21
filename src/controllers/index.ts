@@ -33,6 +33,18 @@ abstract class Controller<T> {
       return res.status(500).json({ error: this.errors.internal });
     }
   };
+
+  read = async (
+    _req: Request, 
+    res: Response<T[] | ResponseError>,
+  ): Promise<typeof res> => {
+    try {
+      const result = await this.service.read();
+      return res.status(200).json(result);
+    } catch (error) {
+      return res.status(500).json({ error: this.errors.internal });
+    }      
+  };
 }
 
 export default Controller;
