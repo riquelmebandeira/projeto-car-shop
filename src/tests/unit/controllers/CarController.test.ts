@@ -59,23 +59,23 @@ describe('Ao chamar, no controller de Car', () => {
         expect(res.status.calledWith(201)).to.be.equal(true)
       })
     })
+  })
 
-    describe('o método read', async () => {
-      before(() => (sinon.stub(carController.service, 'read').resolves(allCars)));
-      after(() => (carController.service.read as sinon.SinonStub).restore());
+  describe('o método read', async () => {
+    before(() => (sinon.stub(carController.service, 'read').resolves(allCars)));
+    after(() => (carController.service.read as sinon.SinonStub).restore());
 
-      const req = mockRequest(invalidCar) as any;
-      const res = mockResponse() as any;
-      
-      it('É chamado o json com um array de objetos', async () => {
-        await carController.read(req, res);
+    const req = mockRequest(invalidCar) as any;
+    const res = mockResponse() as any;
+    
+    it('É chamado o json com um array de objetos', async () => {
+      await carController.read(req, res);
 
-        expect(res.json.calledWith(allCars)).to.be.equal(true);
-      });
-      
-      it('É chamado o status com o código 200', () => {
-        expect(res.status.calledWith(200)).to.be.equal(true)
-      })
+      expect(res.json.calledWith(allCars)).to.be.equal(true);
+    });
+    
+    it('É chamado o status com o código 200', () => {
+      expect(res.status.calledWith(200)).to.be.equal(true)
     })
   })
 });
