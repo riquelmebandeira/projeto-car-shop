@@ -2,7 +2,8 @@ import * as sinon from 'sinon';
 import { expect } from 'chai';
 import CarService from '../../../services/CarService';
 import { Car } from '../../../interfaces/CarInterface';
-import { createdCar, invalidCar, validCar } from '../mocks/CarsMocks';
+import { allCars, createdCar, invalidCar, validCar } from '../mocks/CarsMocks';
+import { Model } from 'mongoose';
 
 const carService = new CarService()
 
@@ -42,5 +43,14 @@ describe('Ao chamar, no service de Car', () => {
         expect(await carService.create(validCar)).to.be.equal(createdCar);
       });
     })
+  })
+
+  describe('o método read', async () => {
+    before(() => sinon.stub(carService.model, 'read').resolves(allCars))
+    after(() => (carService.model.read as sinon.SinonStub).restore())
+
+    it('Retorna todos os carros', async () => {
+      expect(await carService.read()).to.be.equal(allCars);
+    });
   })
 });
