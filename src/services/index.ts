@@ -2,6 +2,7 @@ import { z, ZodAny } from 'zod';
 import { Model } from '../interfaces/ModelInterface';
 import ServiceError from '../interfaces/ServiceErrorInterface';
 
+export const idSchema = z.string().length(24);
 abstract class Service<T> {
   constructor(public model: Model<T>, public documentSchema: ZodAny) { }
 
@@ -18,7 +19,7 @@ abstract class Service<T> {
   public async read(): Promise<T[]> { return this.model.read(); }
 
   public async readOne(id: string): Promise<T | null | ServiceError> {
-    const parsed = z.string().length(24).safeParse(id);
+    const parsed = idSchema.safeParse(id);
 
     if (!parsed.success) {
       return { error: parsed.error };
