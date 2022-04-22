@@ -45,6 +45,27 @@ abstract class Controller<T> {
       return res.status(500).json({ error: this.errors.internal });
     }      
   };
+
+  readOne = async (
+    req: Request, 
+    res: Response<T | ResponseError>,
+  ): Promise<typeof res> => {
+    try {
+      const obj = await this.service.readOne(req.params.id);
+  
+      if (!obj) return res.status(404).json({ error: this.errors.notFound });
+
+      if ('error' in obj) {
+        return res.status(400).json(
+          { error: this.errors.invalidId },
+        );
+      }
+      
+      return res.status(200).json(obj);
+    } catch (err) {
+      return res.status(500).json({ error: this.errors.internal });
+    }
+  };
 }
 
 export default Controller;
