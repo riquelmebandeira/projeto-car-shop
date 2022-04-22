@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import CarController from '../../../controllers/CarController';
-import { createdCar, invalidCar, validCar } from '../mocks/CarsMocks';
+import { allCars, createdCar, invalidCar, validCar } from '../mocks/CarsMocks';
 import ServiceError from '../../../interfaces/ServiceErrorInterface';
 import { Response } from 'express';
 
@@ -57,6 +57,24 @@ describe('Ao chamar, no controller de Car', () => {
 
       it('É chamado o status com o código 201', () => {
         expect(res.status.calledWith(201)).to.be.equal(true)
+      })
+    })
+
+    describe('o método read', async () => {
+      before(() => (sinon.stub(carController.service, 'read').resolves(allCars)));
+      after(() => (carController.service.read as sinon.SinonStub).restore());
+
+      const req = mockRequest(invalidCar) as any;
+      const res = mockResponse() as any;
+      
+      it('É chamado o json com um array de objetos', async () => {
+        await carController.read(req, res);
+
+        expect(res.json.calledWith(allCars)).to.be.equal(true);
+      });
+      
+      it('É chamado o status com o código 200', () => {
+        expect(res.status.calledWith(200)).to.be.equal(true)
       })
     })
   })
