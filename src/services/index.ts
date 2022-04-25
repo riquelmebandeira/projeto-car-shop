@@ -1,4 +1,5 @@
 import { z, ZodAny } from 'zod';
+import ControllerErrors from '../enums/ControllerErros';
 import { Model } from '../interfaces/ModelInterface';
 import ServiceError from '../interfaces/ServiceErrorInterface';
 
@@ -25,7 +26,22 @@ abstract class Service<T> {
       return { error: parsed.error };
     }
 
-    return this.model.readOne(id); 
+    return this.model.readOne(id);
+  }
+
+  public async update(id: string, obj: T): Promise<T | null | ServiceError> {
+    const parsedId = idSchema.safeParse(id);
+    const parsedObj = this.documentSchema.safeParse(obj);
+
+    if (!parsedId.success) {
+      return { error: ControllerErrors.invalidId } as unknown as ServiceError;
+    }
+
+    if (!parsedObj.success) {
+      return { error: parsedObj.error };
+    }
+
+    return this.model.update(id, obj);
   }
 }
 
