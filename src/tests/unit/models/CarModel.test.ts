@@ -2,7 +2,8 @@ import * as sinon from 'sinon';
 import { expect } from 'chai';
 import CarModel from '../../../models/CarModel';
 import { Model } from 'mongoose';
-import { allCars, createdCar, validCar } from '../mocks/CarsMocks';
+import { allCars, createdCar } from '../mocks/CarsMocks';
+import { Car } from '../../../interfaces/CarInterface';
 
 const carModel = new CarModel()
 
@@ -13,7 +14,7 @@ describe('Ao chamar, no model de Car', () => {
     after(() => (Model.create as sinon.SinonStub).restore())
 
     it('Cria um novo carro com sucesso', async () => {
-      expect(await carModel.create(validCar)).to.be.equal(createdCar);
+      expect(await carModel.create({} as Car)).to.be.equal(createdCar);
     });
   })
 
@@ -45,6 +46,29 @@ describe('Ao chamar, no model de Car', () => {
     describe('passando um id existente', () => {
       it('É retornado o objeto do carro', async () => {
         expect(await carModel.readOne('validId')).to.be.equal(createdCar);
+      })
+    })
+  })
+
+  describe('o método update', async () => {
+    before(() => sinon.stub(Model, 'findOneAndUpdate')
+    .onCall(0)
+    .resolves(null)
+    .onCall(1)
+    .resolves(createdCar)
+    )
+
+    after(() => (Model.findOneAndUpdate as sinon.SinonStub).restore())
+
+    describe('passando um id inexistente', () => {
+      it('É retornado null', async () => {
+        expect(await carModel.update('invalidId', {} as Car)).to.be.equal(null);
+      })
+    })
+
+    describe('passando um id existente', () => {
+      it('É retornado o objeto do carro', async () => {
+        expect(await carModel.update('validId', {} as Car)).to.be.equal(createdCar);
       })
     })
   })
