@@ -4,7 +4,7 @@ import CarController from '../../../controllers/CarController';
 import { allCars, createdCar, invalidCar, validCar } from '../mocks/CarsMocks';
 import ServiceError from '../../../interfaces/ServiceErrorInterface';
 import { Response } from 'express';
-import ControllerErrors from '../../../enums/ControllerErros';
+import ErrorMessages from '../../../enums/ErrorMessages';
 
 const carController = new CarController()
 
@@ -100,7 +100,7 @@ describe('Ao chamar, no controller de Car', () => {
 
       it('É chamado o json com um erro', async () => {
         await carController.readOne(req, res);
-        expect(res.json.calledWith({ error: ControllerErrors.invalidId })).to.be.equal(true);
+        expect(res.json.calledWith({ error: ErrorMessages.INVALID_ID })).to.be.equal(true);
       });
       
       it('É chamado o status com o código 400', () => {
@@ -114,7 +114,7 @@ describe('Ao chamar, no controller de Car', () => {
 
       it('É chamado o json com um erro', async () => {
         await carController.readOne(req, res);
-        expect(res.json.calledWith({ error: ControllerErrors.notFound })).to.be.equal(true);
+        expect(res.json.calledWith({ error: ErrorMessages.NOT_FOUND })).to.be.equal(true);
       });
       
       it('É chamado o status com o código 404', () => {
@@ -141,7 +141,7 @@ describe('Ao chamar, no controller de Car', () => {
     before(() => (
       sinon.stub(carController.service, 'update')
       .onCall(0)
-      .resolves({ error: ControllerErrors.invalidId } as unknown as ServiceError)
+      .resolves({ error: ErrorMessages.INVALID_ID } as unknown as ServiceError)
       .onCall(1)
       .resolves({ error: {} } as ServiceError)
       .onCall(2)
@@ -158,7 +158,7 @@ describe('Ao chamar, no controller de Car', () => {
 
       it('É chamado o json com um erro', async () => {
         await carController.update(req, res);
-        expect(res.json.calledWith({ error: ControllerErrors.invalidId })).to.be.equal(true);
+        expect(res.json.calledWith({ error: ErrorMessages.INVALID_ID })).to.be.equal(true);
       });
       
       it('É chamado o status com o código 400', () => {
@@ -186,7 +186,7 @@ describe('Ao chamar, no controller de Car', () => {
 
       it('É chamado o json com um erro', async () => {
         await carController.update(req, res);
-        expect(res.json.calledWith({ error: ControllerErrors.notFound })).to.be.equal(true);
+        expect(res.json.calledWith({ error: ErrorMessages.NOT_FOUND })).to.be.equal(true);
       });
       
       it('É chamado o status com o código 404', () => {

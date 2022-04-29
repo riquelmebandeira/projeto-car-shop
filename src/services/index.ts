@@ -1,5 +1,5 @@
 import { z, ZodAny } from 'zod';
-import ControllerErrors from '../enums/ControllerErros';
+import ErrorMessages from '../enums/ErrorMessages';
 import { Model } from '../interfaces/ModelInterface';
 import ServiceError from '../interfaces/ServiceErrorInterface';
 
@@ -33,7 +33,7 @@ abstract class Service<T> {
     const parsedId = idSchema.safeParse(id);
     
     if (!parsedId.success) {
-      return { error: ControllerErrors.invalidId } as unknown as ServiceError;
+      return { error: ErrorMessages.INVALID_ID } as unknown as ServiceError;
     }
 
     const parsedObj = this.documentSchema.safeParse(obj);
@@ -49,7 +49,7 @@ abstract class Service<T> {
     const parsed = idSchema.safeParse(id);
 
     if (!parsed.success) {
-      return { error: ControllerErrors.invalidId } as unknown as ServiceError;
+      return { error: ErrorMessages.INVALID_ID } as unknown as ServiceError;
     }
 
     return this.model.delete(id);
