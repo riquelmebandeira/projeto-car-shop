@@ -67,9 +67,6 @@ describe('Ao chamar, no service de Car', () => {
       sinon.stub(idSchema, 'safeParse')
       .onCall(0)
       .returns(safeParseError as any)
-      .onCall(1)
-      .returns(safeParseSucess as any)
-      .onCall(2)
       .returns(safeParseSucess as any)
       )
     )
@@ -95,6 +92,74 @@ describe('Ao chamar, no service de Car', () => {
     describe('passando um id existente', () => {
       it('É retornado o objeto do carro', async () => {
         expect(await carService.readOne('validId')).to.be.equal(createdCar);
+      })
+    })
+  })
+
+  describe('O método update', () => {
+    before(() => (
+      sinon.stub(carService.model, 'update')
+      .onCall(0)
+      .resolves(null)
+      .onCall(1)
+      .resolves(createdCar),
+
+      sinon.stub(idSchema, 'safeParse')
+      .onCall(0)
+      .returns(safeParseError as any)
+      .onCall(1)
+      .returns(safeParseError as any)
+      .returns(safeParseSucess as any),
+
+      sinon.stub(carService.documentSchema, 'safeParse')
+      .onCall(0)
+      .returns(safeParseError as any)
+      .onCall(1)
+      .returns(safeParseError as any)
+      .returns(safeParseSucess as any)
+      ))
+
+    after(() => (
+      (carService.model.update as sinon.SinonStub).restore(),
+      (idSchema.safeParse as sinon.SinonStub).restore(),
+      (carService.documentSchema.safeParse as sinon.SinonStub).restore()
+    ))
+
+    describe('passando um id inválido', () => {
+      it('É retornado um objeto', async () => {
+        const response = await carService.update('invalidId', {} as Car);
+        expect(response).to.be.a('object');
+      })
+
+      it('Tal objeto possui a propriedade "error"', async () => {
+        const response = await carService.update('invalidId', {} as Car);
+        expect(response).to.have.a.property('error');
+      })
+    })
+
+    describe('passando um objeto inválido', () => {
+      it('É retornado um objeto', async () => {
+        const response = await carService.update('validId', {} as Car);
+        expect(response).to.be.a('object');
+      })
+
+      it('Tal objeto possui a propriedade "error"', async () => {
+        const response = await carService.update('validId', {} as Car);
+        expect(response).to.have.a.property('error');
+      })
+    })
+
+    describe('passando um id inexistente', () => {
+      it('É retornado null', async () => {
+        const response = await carService.update('unexistingId', {} as Car)
+        expect(response).to.be.equal(null);
+      })
+    })
+
+    describe('passando dados válidos', () => {
+      it('Atualiza e retorna o documento', async () => {
+        const response = await carService.update('validId', {} as Car)
+        expect(response).to.be.equal(createdCar);
       })
     })
   })
