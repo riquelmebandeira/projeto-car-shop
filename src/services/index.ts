@@ -31,11 +31,12 @@ abstract class Service<T> {
 
   public async update(id: string, obj: T): Promise<T | null | ServiceError> {
     const parsedId = idSchema.safeParse(id);
-    const parsedObj = this.documentSchema.safeParse(obj);
-
+    
     if (!parsedId.success) {
       return { error: ControllerErrors.invalidId } as unknown as ServiceError;
     }
+
+    const parsedObj = this.documentSchema.safeParse(obj);
 
     if (!parsedObj.success) {
       return { error: parsedObj.error };
