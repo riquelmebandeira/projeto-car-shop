@@ -4,7 +4,7 @@ import CarController from '../../../controllers/CarController';
 import { allCars, createdCar, invalidCar, validCar } from '../mocks/CarsMocks';
 import ServiceError from '../../../interfaces/ServiceErrorInterface';
 import { Response } from 'express';
-import ErrorMessages from '../../../enums/ErrorMessages';
+import ErrorMessages from '../../../utils/ErrorMessages';
 
 const carController = new CarController()
 

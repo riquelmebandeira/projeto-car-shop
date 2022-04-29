@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import ErrorMessages from '../enums/ErrorMessages';
+import ErrorMessages from '../utils/ErrorMessages';
 import Service from '../services';
 
 export type ResponseError = {

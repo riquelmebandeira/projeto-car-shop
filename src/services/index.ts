@@ -1,5 +1,5 @@
 import { z, ZodAny } from 'zod';
-import ErrorMessages from '../enums/ErrorMessages';
+import ErrorMessages from '../utils/ErrorMessages';
 import { Model } from '../interfaces/ModelInterface';
 import ServiceError from '../interfaces/ServiceErrorInterface';
 
