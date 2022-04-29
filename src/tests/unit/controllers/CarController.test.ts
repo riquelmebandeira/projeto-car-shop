@@ -8,7 +8,7 @@ import ControllerErrors from '../../../enums/ControllerErros';
 
 const carController = new CarController()
 
-const mockRequest = (body?: any, params?: any) => ({
+const mockRequest = (body = {}, params = {}) => ({
   body,
   params,
 });
@@ -33,7 +33,7 @@ describe('Ao chamar, no controller de Car', () => {
     after(() => (carController.service.create as sinon.SinonStub).restore())
 
     describe('e enviar uma requisição inválida', async () => {
-      const req = mockRequest(invalidCar) as any;
+      const req = mockRequest() as any;
       const res = mockResponse() as any;
 
       it('É chamado o json com um erro', async () => {
@@ -48,7 +48,7 @@ describe('Ao chamar, no controller de Car', () => {
     })
 
     describe('e enviar uma requisição válida', () => {
-      const req = mockRequest(validCar) as any;
+      const req = mockRequest() as any;
       const res = mockResponse() as any;
   
       it('É chamdao o json com o carro criado', async () => {
@@ -67,7 +67,7 @@ describe('Ao chamar, no controller de Car', () => {
     before(() => (sinon.stub(carController.service, 'read').resolves(allCars)));
     after(() => (carController.service.read as sinon.SinonStub).restore());
 
-    const req = mockRequest(invalidCar) as any;
+    const req = mockRequest() as any;
     const res = mockResponse() as any;
     
     it('É chamado o json com um array de objetos', async () => {
@@ -95,7 +95,7 @@ describe('Ao chamar, no controller de Car', () => {
     after(() => (carController.service.readOne as sinon.SinonStub).restore())
 
     describe('passando um id inválido', async () => {
-      const req = mockRequest({}, { id: 'invalidId' }) as any;
+      const req = mockRequest() as any;
       const res = mockResponse() as any;
 
       it('É chamado o json com um erro', async () => {
@@ -109,7 +109,7 @@ describe('Ao chamar, no controller de Car', () => {
     })
 
     describe('passando um id inexistente', async () => {
-      const req = mockRequest({}, { id: 'unexistingId' }) as any;
+      const req = mockRequest() as any;
       const res = mockResponse() as any;
 
       it('É chamado o json com um erro', async () => {
@@ -123,7 +123,7 @@ describe('Ao chamar, no controller de Car', () => {
     })
 
     describe('passando um id válido', () => {
-      const req = mockRequest({}, { id: 'validId' }) as any;
+      const req = mockRequest() as any;
       const res = mockResponse() as any;
   
       it('É chamado o json com o objeto do veículo', async () => {
@@ -153,7 +153,7 @@ describe('Ao chamar, no controller de Car', () => {
     after(() => (carController.service.update as sinon.SinonStub).restore())
 
     describe('passando um id inválido', async () => {
-      const req = mockRequest({}, { id: 'invalidId' }) as any;
+      const req = mockRequest() as any;
       const res = mockResponse() as any;
 
       it('É chamado o json com um erro', async () => {
@@ -167,7 +167,7 @@ describe('Ao chamar, no controller de Car', () => {
     })
 
     describe('passando um body inválido', async () => {
-      const req = mockRequest({}, { id: 'validId' }) as any;
+      const req = mockRequest() as any;
       const res = mockResponse() as any;
 
       it('É chamado o json com um erro', async () => {
@@ -181,7 +181,7 @@ describe('Ao chamar, no controller de Car', () => {
     })
 
     describe('passando um id inexistente', async () => {
-      const req = mockRequest({}, { id: 'unexistingId' }) as any;
+      const req = mockRequest() as any;
       const res = mockResponse() as any;
 
       it('É chamado o json com um erro', async () => {
@@ -195,7 +195,7 @@ describe('Ao chamar, no controller de Car', () => {
     })
 
     describe('passando dados válidos', () => {
-      const req = mockRequest({}, { id: 'validId' }) as any;
+      const req = mockRequest() as any;
       const res = mockResponse() as any;
   
       it('É chamado o json com o objeto do veículo', async () => {
