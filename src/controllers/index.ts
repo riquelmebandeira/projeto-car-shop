@@ -87,6 +87,25 @@ abstract class Controller<T> {
       return res.status(500).json({ error: this.errors.internal });
     }
   };
+
+  delete = async (
+    req: Request, 
+    res: Response<T | ResponseError>,
+  ): Promise<typeof res> => {
+    try {
+      const obj = await this.service.delete(req.params.id);
+  
+      if (!obj) return res.status(404).json({ error: this.errors.notFound });
+
+      if ('error' in obj) {
+        return res.status(400).json(obj);
+      }
+      
+      return res.status(204);
+    } catch (err) {
+      return res.status(500).json({ error: this.errors.internal });
+    }
+  };
 }
 
 export default Controller;
