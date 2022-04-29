@@ -44,6 +44,16 @@ abstract class Service<T> {
 
     return this.model.update(id, obj);
   }
+
+  public async delete(id: string): Promise<T | null | ServiceError> {
+    const parsed = idSchema.safeParse(id);
+
+    if (!parsed.success) {
+      return { error: ControllerErrors.invalidId } as unknown as ServiceError;
+    }
+
+    return this.model.delete(id);
+  }
 }
 
 export default Service;
