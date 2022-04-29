@@ -1,58 +1,54 @@
 import { z, ZodAny } from 'zod';
-import ErrorMessages from '../utils/ErrorMessages';
 import { Model } from '../interfaces/ModelInterface';
-import ServiceError from '../interfaces/ServiceErrorInterface';
+import NotFoundError from '../utils/NotFoundError';
+import InvalidIdError from '../utils/InvalidIdError';
 
 export const idSchema = z.string().length(24);
 abstract class Service<T> {
   constructor(public model: Model<T>, public documentSchema: ZodAny) { }
 
-  public async create(obj: T): Promise<T | ServiceError> {
-    const parsed = this.documentSchema.safeParse(obj);
-
-    if (!parsed.success) {
-      return { error: parsed.error };
-    }
+  public async create(obj: T): Promise<T> {
+    this.documentSchema.parse(obj);
 
     return this.model.create(obj);
   }
 
   public async read(): Promise<T[]> { return this.model.read(); }
 
-  public async readOne(id: string): Promise<T | null | ServiceError> {
-    const parsed = idSchema.safeParse(id);
-
-    if (!parsed.success) {
-      return { error: parsed.error };
-    }
-
-    return this.model.readOne(id);
-  }
-
-  public async update(id: string, obj: T): Promise<T | null | ServiceError> {
+  public async readOne(id: string): Promise<T> {
     const parsedId = idSchema.safeParse(id);
-    
-    if (!parsedId.success) {
-      return { error: ErrorMessages.INVALID_ID } as unknown as ServiceError;
-    }
 
-    const parsedObj = this.documentSchema.safeParse(obj);
+    if (!parsedId.success) throw new InvalidIdError();
 
-    if (!parsedObj.success) {
-      return { error: parsedObj.error };
-    }
+    const obj = await this.model.readOne(id);
 
-    return this.model.update(id, obj);
+    if (!obj) throw new NotFoundError();
+
+    return obj;
   }
 
-  public async delete(id: string): Promise<T | null | ServiceError> {
-    const parsed = idSchema.safeParse(id);
+  public async update(id: string, obj: T): Promise<T> {
+    const parsedId = idSchema.safeParse(id);
 
-    if (!parsed.success) {
-      return { error: ErrorMessages.INVALID_ID } as unknown as ServiceError;
-    }
+    if (!parsedId.success) throw new InvalidIdError();
+  
+    this.documentSchema.parse(obj);
 
-    return this.model.delete(id);
+    const result = await this.model.update(id, obj);
+
+    if (!result) throw new NotFoundError();
+
+    return result;
+  }
+
+  public async delete(id: string): Promise<void> {
+    const parsedId = idSchema.safeParse(id);
+
+    if (!parsedId.success) throw new InvalidIdError();
+
+    const result = await this.model.delete(id);
+
+    if (!result) throw new NotFoundError();
   }
 }
 

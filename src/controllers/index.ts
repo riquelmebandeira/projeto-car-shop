@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import ErrorMessages from '../utils/ErrorMessages';
+import { NextFunction, Request, Response } from 'express';
 import Service from '../services';
+import StatusCode from '../utils/StatusCode';
 
 export type ResponseError = {
   error: unknown;
@@ -8,8 +8,6 @@ export type ResponseError = {
 
 abstract class Controller<T> {
   private _route: string;
-
-  protected errors = ErrorMessages;
 
   constructor(public service: Service<T>, route: string) {
     this._route = route;
@@ -20,90 +18,72 @@ abstract class Controller<T> {
   create = async (
     req: Request,
     res: Response<T | ResponseError>,
-  ): Promise<typeof res> => {
+    next: NextFunction,
+  ): Promise<typeof res | void> => {
     try {
       const obj = await this.service.create(req.body);
   
-      if (!obj) return res.status(404).json({ error: this.errors.NOT_FOUND });
-
-      if ('error' in obj) return res.status(400).json(obj);
-      
-      return res.status(201).json(obj);
+      return res.status(StatusCode.CREATED).json(obj);
     } catch (err) {
-      return res.status(500).json({ error: this.errors.INTERNAL_SERVER_ERROR });
+      next(err);
     }
   };
 
   read = async (
     _req: Request, 
     res: Response<T[] | ResponseError>,
-  ): Promise<typeof res> => {
+    next: NextFunction,
+  ): Promise<typeof res | void> => {
     try {
       const result = await this.service.read();
-      return res.status(200).json(result);
-    } catch (error) {
-      return res.status(500).json({ error: this.errors.INTERNAL_SERVER_ERROR });
+
+      return res.status(StatusCode.OK).json(result);
+    } catch (err) {
+      next(err);
     }      
   };
 
   readOne = async (
     req: Request, 
     res: Response<T | ResponseError>,
-  ): Promise<typeof res> => {
+    next: NextFunction,
+  ): Promise<typeof res | void> => {
     try {
       const obj = await this.service.readOne(req.params.id);
   
-      if (!obj) return res.status(404).json({ error: this.errors.NOT_FOUND });
-
-      if ('error' in obj) {
-        return res.status(400).json(
-          { error: this.errors.INVALID_ID },
-        );
-      }
-      
-      return res.status(200).json(obj);
+      return res.status(StatusCode.OK).json(obj);
     } catch (err) {
-      return res.status(500).json({ error: this.errors.INTERNAL_SERVER_ERROR });
-    }
+      next(err);
+    }      
   };
 
   update = async (
     req: Request, 
     res: Response<T | ResponseError>,
-  ): Promise<typeof res> => {
+    next: NextFunction,
+  ): Promise<typeof res | void> => {
     try {
       const { body, params: { id } } = req;
 
       const obj = await this.service.update(id, body);
   
-      if (!obj) return res.status(404).json({ error: this.errors.NOT_FOUND });
-
-      if ('error' in obj) {
-        return res.status(400).json(obj);
-      }
-      
-      return res.status(200).json(obj);
+      return res.status(StatusCode.OK).json(obj);
     } catch (err) {
-      return res.status(500).json({ error: this.errors.INTERNAL_SERVER_ERROR });
-    }
+      next(err);
+    }    
   };
 
   delete = async (
     req: Request, 
     res: Response<T | ResponseError>,
-  ): Promise<typeof res> => {
+    next: NextFunction,
+  ): Promise<typeof res | void> => {
     try {
-      const obj = await this.service.delete(req.params.id);
+      await this.service.delete(req.params.id);
 
-      if (!obj) return res.status(404).json({ error: this.errors.NOT_FOUND });
-
-      if ('error' in obj) {
-        return res.status(400).json(obj);
-      }
-      
-      return res.status(204).json();
+      return res.status(StatusCode.NO_CONTENT).json();
     } catch (err) {
-      return res.status(500).json({ error: this.errors.INTERNAL_SERVER_ERROR });
+      next(err);
     }
   };
 }
