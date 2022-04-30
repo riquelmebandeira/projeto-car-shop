@@ -4,6 +4,8 @@ import CarService from '../../../services/CarService';
 import { Car } from '../../../interfaces/CarInterface';
 import { allCars, createdCar, invalidCar, validCar } from '../mocks/CarsMocks';
 import { idSchema } from '../../../services';
+import NotFoundError from '../../../utils/NotFoundError';
+import InvalidIdError from '../../../utils/InvalidIdError';
 
 const carService = new CarService()
 
@@ -17,27 +19,31 @@ const safeParseSucess = {
   data: {}
 }
 
-describe('Ao chamar, no service de Car', () => {
+const mockError = {}
 
-  describe('o método create', async () => {
+describe('Ao chamar, no service de Car', () => {
+  describe('O método create', async () => {
     before(() => (
       sinon.stub(carService.model, 'create').resolves(createdCar),
-      sinon.stub(carService.documentSchema, 'safeParse')
+      sinon.stub(carService.documentSchema, 'parse')
       .onCall(0)
-      .returns(safeParseError as any)
-      .onCall(1)
-      .returns(safeParseSucess as any)
+      .throws(mockError)
+      .returns(validCar)
       ))
 
     after(() => (
       (carService.model.create as sinon.SinonStub).restore(),
-      (carService.documentSchema.safeParse as sinon.SinonStub).restore()
+      (carService.documentSchema.parse as sinon.SinonStub).restore()
       )
     )
 
     describe('e passar um objeto inválido', () => {
-      it('Retorna um erro', async () => {
-        expect(await carService.create(invalidCar as Car)).to.deep.equal({ error: {} })
+      it('É lançado um erro', async () => {
+        try {
+          await carService.create(invalidCar as Car);
+        } catch (error) {
+          expect(error).to.be.equal(mockError)
+        }
       });
     })
 
@@ -48,7 +54,7 @@ describe('Ao chamar, no service de Car', () => {
     })
   })
 
-  describe('o método read', async () => {
+  describe('O método read', async () => {
     before(() => sinon.stub(carService.model, 'read').resolves(allCars))
     after(() => (carService.model.read as sinon.SinonStub).restore())
 
@@ -57,7 +63,7 @@ describe('Ao chamar, no service de Car', () => {
     });
   })
 
-  describe('o método readOne', async () => {
+  describe('O método readOne', async () => {
     before(() => (
       sinon.stub(carService.model, 'readOne')
       .onCall(0)
@@ -78,20 +84,28 @@ describe('Ao chamar, no service de Car', () => {
     )
 
     describe('passando um id inválido', () => {
-      it('É retornado um erro', async () => {
-        expect(await carService.readOne('invalidId')).to.be.deep.equal({ error: {} });
+      it('É lançado o erro de id inválido', async () => {
+        try {
+          await carService.readOne('');
+        } catch (error) {
+          expect(error).to.be.instanceOf(InvalidIdError);
+        }
       })
     })
 
     describe('passando um id inexistente', () => {
-      it('É retornado null', async () => {
-        expect(await carService.readOne('unexistingId')).to.be.equal(null);
+      it('É lançado o erro de não encontrado', async () => {
+        try {
+          await carService.readOne('');
+        } catch (error) {
+          expect(error).to.be.instanceOf(NotFoundError);
+        }
       })
     })
 
     describe('passando um id existente', () => {
       it('É retornado o objeto do carro', async () => {
-        expect(await carService.readOne('validId')).to.be.equal(createdCar);
+        expect(await carService.readOne('')).to.be.equal(createdCar);
       })
     })
   })
@@ -107,58 +121,54 @@ describe('Ao chamar, no service de Car', () => {
       sinon.stub(idSchema, 'safeParse')
       .onCall(0)
       .returns(safeParseError as any)
-      .onCall(1)
-      .returns(safeParseError as any)
       .returns(safeParseSucess as any),
 
-      sinon.stub(carService.documentSchema, 'safeParse')
+      sinon.stub(carService.documentSchema, 'parse')
       .onCall(0)
-      .returns(safeParseError as any)
-      .onCall(1)
-      .returns(safeParseError as any)
+      .throws(mockError)
       .returns(safeParseSucess as any)
       ))
 
     after(() => (
       (carService.model.update as sinon.SinonStub).restore(),
       (idSchema.safeParse as sinon.SinonStub).restore(),
-      (carService.documentSchema.safeParse as sinon.SinonStub).restore()
+      (carService.documentSchema.parse as sinon.SinonStub).restore()
     ))
 
     describe('passando um id inválido', () => {
-      it('É retornado um objeto', async () => {
-        const response = await carService.update('invalidId', {} as Car);
-        expect(response).to.be.a('object');
-      })
-
-      it('Tal objeto possui a propriedade "error"', async () => {
-        const response = await carService.update('invalidId', {} as Car);
-        expect(response).to.have.a.property('error');
+      it('É lançado o erro de id inválido', async () => {
+        try {
+          await carService.update('', {} as Car);
+        } catch (error) {
+          expect(error).to.be.instanceOf(InvalidIdError);
+        }
       })
     })
 
     describe('passando um objeto inválido', () => {
-      it('É retornado um objeto', async () => {
-        const response = await carService.update('validId', {} as Car);
-        expect(response).to.be.a('object');
-      })
-
-      it('Tal objeto possui a propriedade "error"', async () => {
-        const response = await carService.update('validId', {} as Car);
-        expect(response).to.have.a.property('error');
+      it('É lançado um erro', async () => {
+        try {
+          await carService.update('', {} as Car);
+        } catch (error) {
+          expect(error).to.be.equal(mockError);
+        }
       })
     })
 
     describe('passando um id inexistente', () => {
-      it('É retornado null', async () => {
-        const response = await carService.update('unexistingId', {} as Car)
-        expect(response).to.be.equal(null);
+      it('É lançado o erro de não encontrado', async () => {
+        try {
+          await carService.update('', {} as Car);
+        } catch (error) {
+          expect(error).to.be.instanceOf(NotFoundError);
+        }
       })
     })
 
     describe('passando dados válidos', () => {
       it('Atualiza e retorna o documento', async () => {
-        const response = await carService.update('validId', {} as Car)
+        const response = await carService.update('', {} as Car)
+
         expect(response).to.be.equal(createdCar);
       })
     })
