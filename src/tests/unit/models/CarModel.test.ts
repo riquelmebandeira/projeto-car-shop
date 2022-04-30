@@ -8,8 +8,7 @@ import { Car } from '../../../interfaces/CarInterface';
 const carModel = new CarModel()
 
 describe('Ao chamar, no model de Car', () => {
-
-  describe('o método create', async () => {
+  describe('O método create', async () => {
     before(() => sinon.stub(Model, 'create').resolves(createdCar))
     after(() => (Model.create as sinon.SinonStub).restore())
 
@@ -18,7 +17,7 @@ describe('Ao chamar, no model de Car', () => {
     });
   })
 
-  describe('o método read', async () => {
+  describe('O método read', async () => {
     before(() => sinon.stub(Model, 'find').resolves(allCars))
     after(() => (Model.find as sinon.SinonStub).restore())
 
@@ -27,7 +26,7 @@ describe('Ao chamar, no model de Car', () => {
     });
   })
 
-  describe('o método readOne', async () => {
+  describe('O método readOne', async () => {
     before(() => sinon.stub(Model, 'findOne')
     .onCall(0)
     .resolves(null)
@@ -39,18 +38,18 @@ describe('Ao chamar, no model de Car', () => {
 
     describe('passando um id inexistente', () => {
       it('É retornado null', async () => {
-        expect(await carModel.readOne('invalidId')).to.be.equal(null);
+        expect(await carModel.readOne('')).to.be.equal(null);
       })
     })
 
     describe('passando um id existente', () => {
       it('É retornado o objeto do carro', async () => {
-        expect(await carModel.readOne('validId')).to.be.equal(createdCar);
+        expect(await carModel.readOne('')).to.be.equal(createdCar);
       })
     })
   })
 
-  describe('o método update', async () => {
+  describe('O método update', async () => {
     before(() => sinon.stub(Model, 'findOneAndUpdate')
     .onCall(0)
     .resolves(null)
@@ -62,13 +61,13 @@ describe('Ao chamar, no model de Car', () => {
 
     describe('passando um id inexistente', () => {
       it('É retornado null', async () => {
-        expect(await carModel.update('invalidId', {} as Car)).to.be.equal(null);
+        expect(await carModel.update('', {} as Car)).to.be.equal(null);
       })
     })
 
     describe('passando um id existente', () => {
       it('É retornado o objeto do carro', async () => {
-        expect(await carModel.update('validId', {} as Car)).to.be.equal(createdCar);
+        expect(await carModel.update('', {} as Car)).to.be.equal(createdCar);
       })
     })
   })
