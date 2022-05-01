@@ -155,4 +155,37 @@ describe('Ao chamar, no controller de Car', () => {
       })
     })
   })
+
+  describe('O método delete', async () => {
+    before(() => (
+      sinon.stub(carController.service, 'delete')
+      .onCall(0)
+      .throws(mockError)
+      .resolves(undefined)
+      ))
+
+    after(() => (carController.service.delete as sinon.SinonStub).restore())
+
+    describe('passando um id inválido', async () => {
+      const next = sinon.stub();
+      const req = mockRequest() as any;
+      const res = mockResponse() as any;
+
+      it('É chamado o next com um erro', async () => {
+        await carController.delete(req, res, next);
+        expect(next.calledWith(mockError)).to.be.equal(true);
+      });
+    })
+
+    describe('passando um id válido', () => {
+      const next = sinon.stub();
+      const req = mockRequest() as any;
+      const res = mockResponse() as any;
+
+      it('É chamado o status com o código 204', async () => {
+        await carController.delete(req, res, next);
+        expect(res.status.calledWith(204)).to.be.equal(true)
+      })
+    })
+  })
 });
