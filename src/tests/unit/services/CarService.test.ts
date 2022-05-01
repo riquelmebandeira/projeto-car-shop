@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import CarService from '../../../services/CarService';
 import { Car } from '../../../interfaces/CarInterface';
 import { allCars, createdCar, invalidCar, validCar } from '../mocks/CarsMocks';
-import { idSchema } from '../../../services';
+import { idSchema } from '../../../services/Service';
 import NotFoundError from '../../../utils/NotFoundError';
 import InvalidIdError from '../../../utils/InvalidIdError';
 

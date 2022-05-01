@@ -1,6 +1,6 @@
 import CustomError from './CustomError';
-import ErrorMessages from './ErrorMessages';
-import StatusCode from './StatusCode';
+import ErrorMessages from '../enums/ErrorMessages';
+import StatusCode from '../enums/StatusCode';
 
 class NotFoundError extends CustomError {
   constructor(

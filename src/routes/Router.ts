@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import Controller from '../controllers';
+import Controller from '../controllers/Controller';
 
 class CustomRouter<T> {
   public router: Router;

@@ -1,4 +1,4 @@
-import Controller from '.';
+import Controller from './Controller';
 import CarService from '../services/CarService';
 import { Car } from '../interfaces/CarInterface';
 

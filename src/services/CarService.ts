@@ -1,5 +1,5 @@
 import { ZodAny } from 'zod';
-import Service from '.';
+import Service from './Service';
 import { Car, CarSchema } from '../interfaces/CarInterface';
 import CarModel from '../models/CarModel';
 

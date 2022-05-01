@@ -1,8 +1,8 @@
 import { Request, Response, ErrorRequestHandler, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import CustomError from './CustomError';
-import ErrorMessages from './ErrorMessages';
-import StatusCode from './StatusCode';
+import ErrorMessages from '../enums/ErrorMessages';
+import StatusCode from '../enums/StatusCode';
 
 const errorMiddleware = ( 
   err: ErrorRequestHandler, 
