@@ -66,8 +66,31 @@ describe('Ao chamar, no model de Car', () => {
     })
 
     describe('passando um id existente', () => {
-      it('É retornado o objeto do carro', async () => {
+      it('É retornado o objeto do carro atualizado', async () => {
         expect(await carModel.update('', {} as Car)).to.be.equal(createdCar);
+      })
+    })
+  })
+
+  describe('O método delete', async () => {
+    before(() => sinon.stub(Model, 'findOneAndDelete')
+    .onCall(0)
+    .resolves(null)
+    .onCall(1)
+    .resolves(createdCar)
+    )
+
+    after(() => (Model.findOneAndDelete as sinon.SinonStub).restore())
+
+    describe('passando um id inexistente', () => {
+      it('É retornado null', async () => {
+        expect(await carModel.delete('')).to.be.equal(null);
+      })
+    })
+
+    describe('passando um id existente', () => {
+      it('É retornado o objeto do carro deletado', async () => {
+        expect(await carModel.delete('')).to.be.equal(createdCar);
       })
     })
   })
