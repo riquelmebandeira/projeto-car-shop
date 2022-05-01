@@ -173,4 +173,52 @@ describe('Ao chamar, no service de Car', () => {
       })
     })
   })
+
+  describe('O método delete', async () => {
+    before(() => (
+      sinon.stub(carService.model, 'delete')
+      .onCall(0)
+      .resolves(null)
+      .onCall(1)
+      .resolves(createdCar),
+      sinon.stub(idSchema, 'safeParse')
+      .onCall(0)
+      .returns(safeParseError as any)
+      .returns(safeParseSucess as any)
+      )
+    )
+
+    after(() => (
+      (carService.model.delete as sinon.SinonStub).restore(),
+      (idSchema.safeParse as sinon.SinonStub).restore()
+      )
+    )
+
+    describe('passando um id inválido', () => {
+      it('É lançado o erro de id inválido', async () => {
+        try {
+          await carService.delete('');
+        } catch (error) {
+          expect(error).to.be.instanceOf(InvalidIdError);
+        }
+      })
+    })
+
+    describe('passando um id inexistente', () => {
+      it('É lançado o erro de não encontrado', async () => {
+        try {
+          await carService.delete('');
+        } catch (error) {
+          expect(error).to.be.instanceOf(NotFoundError);
+        }
+      })
+    })
+
+    describe('passando um id existente', () => {
+      it('Nada é retornado', async () => {
+        const response = await carService.delete('');
+        expect(response).to.be.equal(undefined);
+      })
+    })
+  })
 });
